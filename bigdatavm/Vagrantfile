@@ -71,7 +71,7 @@ Vagrant.configure(2) do |config|
 	apt-get install -y zip unzip
 	echo Adding Maven to PATH environmental variable
 	export PATH=$PATH:/home/vagrant/apache-maven-3.3.9/bin
-	export PATH=$PATH:/home/vagrant/oozie-4.3.0-distro/oozie-4.3.0/bin/
+	export PATH=$PATH:/home/vagrant/oozie-4.3.1-distro/oozie-4.3.1/bin/
 	echo PATH=\"$PATH\" > /etc/environment
   SHELL
   
@@ -113,25 +113,25 @@ Vagrant.configure(2) do |config|
     fi
     tar -zxf apache-maven-3.3.9-bin.tar.gz
     chown -R vagrant apache-maven-3.3.9
-	if [ -e /vagrant/download_cache/oozie-4.3.0.tar.gz ];
+	if [ -e /vagrant/download_cache/oozie-4.3.1.tar.gz ];
     then 
 		echo Copying Oozie distribution from the host
-		cp /vagrant/download_cache/oozie-4.3.0.tar.gz ~
+		cp /vagrant/download_cache/oozie-4.3.1.tar.gz ~
     else
         echo Downloading Oozie distribution
-        wget -q http://mirrors.rackhosting.com/apache/oozie/4.3.0/oozie-4.3.0.tar.gz
+        wget -q http://mirrors.rackhosting.com/apache/oozie/4.3.1/oozie-4.3.1.tar.gz
         echo Caching Oozie distribution at the host
-        rsync -a oozie-4.3.0.tar.gz /vagrant/download_cache/
+        rsync -a oozie-4.3.1.tar.gz /vagrant/download_cache/
     fi
-    tar -zxf oozie-4.3.0.tar.gz
-    chown -R vagrant oozie-4.3.0
+    tar -zxf oozie-4.3.1.tar.gz
+    chown -R vagrant oozie-4.3.1
 	if [ -e /vagrant/download_cache/ext-2.2.zip ];
     then 
 		echo Copying ExtJS 2.2 distribution from the host
 		cp /vagrant/download_cache/ext-2.2.zip ~
     else
         echo Downloading ExtJS 2.2 distribution
-        wget -q http://dev.sencha.com/deploy/ext-2.2.zip
+        wget -q http://archive.cloudera.com/gplextras/misc/ext-2.2.zip
         echo Caching ExtJS 2.2 distribution at the host
         rsync -a ext-2.2.zip /vagrant/download_cache/
     fi
@@ -150,35 +150,35 @@ Vagrant.configure(2) do |config|
 	echo Overwriting hbase-site.xml
     cat /vagrant/hbase_conf/hbase-site.xml > hbase-1.1.1/conf/hbase-site.xml
 	echo Overwriting Oozie POM file
-	cat /vagrant/oozie_conf/pom.xml > oozie-4.3.0/pom.xml
+	cat /vagrant/oozie_conf/pom.xml > oozie-4.3.1/pom.xml
     echo Setting up passwordless ssh
     ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa
     cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
     echo StrictHostKeyChecking no >> ~/.ssh/config
     echo Formatting namenode
     hadoop-2.7.4/bin/hdfs namenode -format
-	if [ -e /vagrant/download_cache/oozie-4.3.0-distro.tar.gz ];
+	if [ -e /vagrant/download_cache/oozie-4.3.1-distro.tar.gz ];
     then
 		echo Copying built Oozie distro from the host
-		mkdir oozie-4.3.0/distro/target/		
-		cp /vagrant/download_cache/oozie-4.3.0-distro.tar.gz oozie-4.3.0/distro/target/
+		mkdir oozie-4.3.1/distro/target/		
+		cp /vagrant/download_cache/oozie-4.3.1-distro.tar.gz oozie-4.3.1/distro/target/
 	else
 		echo Building Oozie
 		export PATH=$PATH:/home/vagrant/apache-maven-3.3.9/bin
-		oozie-4.3.0/bin/mkdistro.sh -Puber -Phadoop-2 -DskipTests
-		cp oozie-4.3.0/distro/target/oozie-4.3.0-distro.tar.gz /vagrant/download_cache/
+		oozie-4.3.1/bin/mkdistro.sh -Puber -Phadoop-2 -DskipTests
+		cp oozie-4.3.1/distro/target/oozie-4.3.1-distro.tar.gz /vagrant/download_cache/
 	fi
-	mkdir /home/vagrant/oozie-4.3.0-distro
-	tar -zxf oozie-4.3.0/distro/target/oozie-4.3.0-distro.tar.gz -C /home/vagrant/oozie-4.3.0-distro
+	mkdir /home/vagrant/oozie-4.3.1-distro
+	tar -zxf oozie-4.3.1/distro/target/oozie-4.3.1-distro.tar.gz -C /home/vagrant/oozie-4.3.1-distro
 	echo Configuring Oozie
-	mkdir /home/vagrant/oozie-4.3.0-distro/oozie-4.3.0/libext
-	cp /home/vagrant/ext-2.2.zip /home/vagrant/oozie-4.3.0-distro/oozie-4.3.0/libext
+	mkdir /home/vagrant/oozie-4.3.1-distro/oozie-4.3.1/libext
+	cp /home/vagrant/ext-2.2.zip /home/vagrant/oozie-4.3.1-distro/oozie-4.3.1/libext
 	echo Overwriting conf/hadoop-conf contents for Oozie
-    cat /vagrant/hadoop_conf/core-site.xml > /home/vagrant/oozie-4.3.0-distro/oozie-4.3.0/conf/hadoop-conf/core-site.xml
-	cat /vagrant/hadoop_conf/mapred-site.xml > /home/vagrant/oozie-4.3.0-distro/oozie-4.3.0/conf/hadoop-conf/mapred-site.xml
-	cat /vagrant/hadoop_conf/yarn-site.xml > /home/vagrant/oozie-4.3.0-distro/oozie-4.3.0/conf/hadoop-conf/yarn-site.xml
-	cat /vagrant/hadoop_conf/hdfs-site.xml > /home/vagrant/oozie-4.3.0-distro/oozie-4.3.0/conf/hadoop-conf/hdfs-site.xml
-	cat /vagrant/hadoop_conf/hadoop-env.sh > /home/vagrant/oozie-4.3.0-distro/oozie-4.3.0/conf/hadoop-conf/hadoop-env.sh
+    cat /vagrant/hadoop_conf/core-site.xml > /home/vagrant/oozie-4.3.1-distro/oozie-4.3.1/conf/hadoop-conf/core-site.xml
+	cat /vagrant/hadoop_conf/mapred-site.xml > /home/vagrant/oozie-4.3.1-distro/oozie-4.3.1/conf/hadoop-conf/mapred-site.xml
+	cat /vagrant/hadoop_conf/yarn-site.xml > /home/vagrant/oozie-4.3.1-distro/oozie-4.3.1/conf/hadoop-conf/yarn-site.xml
+	cat /vagrant/hadoop_conf/hdfs-site.xml > /home/vagrant/oozie-4.3.1-distro/oozie-4.3.1/conf/hadoop-conf/hdfs-site.xml
+	cat /vagrant/hadoop_conf/hadoop-env.sh > /home/vagrant/oozie-4.3.1-distro/oozie-4.3.1/conf/hadoop-conf/hadoop-env.sh
   SHELL
 
   # Run always
@@ -203,15 +203,15 @@ Vagrant.configure(2) do |config|
 	echo Loading HBase with hbase_preloaded_data scripts
 	cat /vagrant/hbase_preloaded_data/* | hbase-1.1.1/bin/hbase shell
 	echo Uploading Oozie sharelibs to HDFS
-	/home/vagrant/oozie-4.3.0-distro/oozie-4.3.0/bin/oozie-setup.sh sharelib create -fs hdfs://bigdatavm:9000 -locallib /home/vagrant/oozie-4.3.0-distro/oozie-4.3.0/oozie-sharelib-4.3.0.tar.gz
+	/home/vagrant/oozie-4.3.1-distro/oozie-4.3.1/bin/oozie-setup.sh sharelib create -fs hdfs://bigdatavm:9000 -locallib /home/vagrant/oozie-4.3.1-distro/oozie-4.3.1/oozie-sharelib-4.3.1.tar.gz
 	echo Preparing Oozie WAR file
-	/home/vagrant/oozie-4.3.0-distro/oozie-4.3.0/bin/oozie-setup.sh prepare-war
+	/home/vagrant/oozie-4.3.1-distro/oozie-4.3.1/bin/oozie-setup.sh prepare-war
   SHELL
   
   # Run always
   config.vm.provision "shell", privileged: false, run: "always", inline: <<-SHELL
 	echo Starting Oozie
-	oozie-4.3.0-distro/oozie-4.3.0/bin/oozied.sh start
+	oozie-4.3.1-distro/oozie-4.3.1/bin/oozied.sh start
   SHELL
   
   # Using vagrant-triggers plugin to stop YARN and HDFS on halt and reload commands
