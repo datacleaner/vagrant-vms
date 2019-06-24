@@ -3,7 +3,7 @@
 # vi: set ft=ruby :
 
 Vagrant.configure(2) do |config|
-  config.vm.box = "ubuntu/trusty64"
+  config.vm.box = "ubuntu/xenial64"
 
   # HDFS direct interaction
   config.vm.network "forwarded_port", guest: 8020, host: 8020
@@ -50,7 +50,7 @@ Vagrant.configure(2) do |config|
 	vb.name = config.vm.hostname.to_s
 
     # Customize the amount of memory on the VM:
-    vb.memory = "4096"
+    vb.memory = "8192"
   end
 
   # Initial run script, executed with root privileges
@@ -59,14 +59,10 @@ Vagrant.configure(2) do |config|
     cp /vagrant/hbase_conf/etc-hosts.txt /etc/hosts
     echo Updating apt repository
     apt-get update -y
-    echo Installing Java 8
-	sudo apt-get install -y software-properties-common python-software-properties
-	echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | sudo /usr/bin/debconf-set-selections
-	sudo add-apt-repository ppa:webupd8team/java -y
-	sudo apt-get update
-	sudo apt-get install oracle-java8-installer
-	echo "Setting environment variables for Java 8.."
-	sudo apt-get install -y oracle-java8-set-default
+    echo Installing OpenJDK 8
+	add-apt-repository ppa:openjdk-r/ppa -y
+	apt-get update
+	apt-get install openjdk-8-jdk -y
 	echo Installing "zip" and "unzip"
 	apt-get install -y zip unzip
 	echo Adding Maven to PATH environmental variable
@@ -83,7 +79,7 @@ Vagrant.configure(2) do |config|
 		cp /vagrant/download_cache/hadoop-2.7.4.tar.gz ~
     else
         echo Downloading Hadoop distribution
-        wget -q http://mirrors.rackhosting.com/apache/hadoop/common/hadoop-2.7.4/hadoop-2.7.4.tar.gz
+        wget -q http://archive.apache.org/dist/hadoop/common/hadoop-2.7.4/hadoop-2.7.4.tar.gz
         echo Caching Hadoop distribution at the host
         rsync -a hadoop-2.7.4.tar.gz /vagrant/download_cache/
     fi
@@ -149,8 +145,6 @@ Vagrant.configure(2) do |config|
     cat /vagrant/hbase_conf/hbase-env.sh > hbase-1.1.1/conf/hbase-env.sh
 	echo Overwriting hbase-site.xml
     cat /vagrant/hbase_conf/hbase-site.xml > hbase-1.1.1/conf/hbase-site.xml
-	echo Overwriting Oozie POM file
-	cat /vagrant/oozie_conf/pom.xml > oozie-4.3.1/pom.xml
     echo Setting up passwordless ssh
     ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa
     cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys

@@ -7,3 +7,4 @@ download_cache
 .settings
 .classpath
 bigdatavm/datacleaner/lib
+/bigdatavm/ubuntu-xenial-16.04-cloudimg-console.log
