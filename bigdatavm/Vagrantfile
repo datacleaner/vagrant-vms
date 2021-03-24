@@ -209,24 +209,24 @@ Vagrant.configure(2) do |config|
   SHELL
   
   # Using vagrant-triggers plugin to stop YARN and HDFS on halt and reload commands
-  config.trigger.before :halt do
-	info "Stopping MR historyserver"
-	run "vagrant ssh -c 'hadoop-2.7.4/sbin/mr-jobhistory-daemon.sh stop historyserver'"
-	info "Stopping YARN"
-	run "vagrant ssh -c 'hadoop-2.7.4/sbin/stop-yarn.sh'"
-	info "Stopping HBase"
-	run "vagrant ssh -c 'hbase-1.1.1/bin/stop-hbase.sh'"
-	info "Stopping DFS"
-	run "vagrant ssh -c 'hadoop-2.7.4/sbin/stop-dfs.sh'"
+  config.trigger.before :halt do |trigger|
+	trigger.info = "Stopping MR historyserver"
+	trigger.run = {inline: "vagrant ssh -c 'hadoop-2.7.4/sbin/mr-jobhistory-daemon.sh stop historyserver'"}
+	trigger.info = "Stopping YARN"
+	trigger.run = {inline: "vagrant ssh -c 'hadoop-2.7.4/sbin/stop-yarn.sh'"}
+	trigger.info = "Stopping HBase"
+	trigger.run = {inline: "vagrant ssh -c 'hbase-1.1.1/bin/stop-hbase.sh'"}
+	trigger.info = "Stopping DFS"
+	trigger.run = {inline: "vagrant ssh -c 'hadoop-2.7.4/sbin/stop-dfs.sh'"}
   end
-  config.trigger.before :reload do
-	info Stopping MR historyserver
-	run "hadoop-2.7.4/sbin/mr-jobhistory-daemon.sh stop historyserver"
-	info "Stopping YARN"
-	run "vagrant ssh -c 'hadoop-2.7.4/sbin/stop-yarn.sh'"
-	info "Stopping HBase"
-	run "vagrant ssh -c 'hbase-1.1.1/bin/stop-hbase.sh'"
-	info "Stopping DFS"
-	run "vagrant ssh -c 'hadoop-2.7.4/sbin/stop-dfs.sh'"
+  config.trigger.before :reload do |trigger|
+	trigger.info = "Stopping MR historyserver"
+	trigger.run = {inline: "hadoop-2.7.4/sbin/mr-jobhistory-daemon.sh stop historyserver"}
+	trigger.info = "Stopping YARN"
+	trigger.run = {inline: "vagrant ssh -c 'hadoop-2.7.4/sbin/stop-yarn.sh'"}
+	trigger.info = "Stopping HBase"
+	trigger.run = {inline: "vagrant ssh -c 'hbase-1.1.1/bin/stop-hbase.sh'"}
+	trigger.info = "Stopping DFS"
+	trigger.run = {inline: "vagrant ssh -c 'hadoop-2.7.4/sbin/stop-dfs.sh'"}
   end
 end
